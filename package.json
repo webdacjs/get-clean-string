@@ -6,6 +6,12 @@
   "scripts": {
     "test": "jest"
   },
+  "keywords": [
+    "string",
+    "string clean",
+    "string manipulation",
+    "remove accents"
+  ],
   "author": "Juan Convers",
   "license": "MIT"
 }
