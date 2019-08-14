@@ -5,6 +5,10 @@ test('Test nothing is changed', () => {
     expect(clean(testString)).toBe(testString)
 })
 
+test('Test empty query', () => {
+    expect(clean()).toBe('')
+})
+
 test('Cleans the trailing spaces', () => {
     const testString = '   trailing spaces    '
     const expected = 'trailing spaces'
