@@ -30,3 +30,9 @@ test('Remove the quotes and double quotes', () => {
     const expected = 'dads house and moms car'
     expect(clean(testString)).toBe(expected)
 })
+
+test('Testing custom separator -', () => {
+    const testString = 'text should contain dashes'
+    const expected = 'text-should-contain-dashes'
+    expect(clean(testString, '-')).toBe(expected)
+})
