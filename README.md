@@ -1,6 +1,8 @@
 # get-clean-string
 
-Module to clean a string, removing special characters and replacing accents for ascii equivalents. It accepts custom separators and custom replacements (see documentation below)
+Simple and fase NPM module with the purpose of clean a character string, by removing its special characters and replacing any accents for the ascii equivalents. The module also accepts custom separators and custom replacements (see documentation below)
+
+It doesn't have any external dependency.
 
 ## Install
 
