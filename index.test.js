@@ -11,6 +11,12 @@ test('Cleans the trailing spaces', () => {
     expect(clean(testString)).toBe(expected)
 })
 
+test('Cleans many signs', () => {
+    const testString = ' remove these: !@#$%^&^*&() '
+    const expected = 'remove these'
+    expect(clean(testString)).toBe(expected)
+})
+
 test('Cleans the punctuation sign', () => {
     const testString = 'test!! with >>?signs'
     const expected = 'test with signs'
