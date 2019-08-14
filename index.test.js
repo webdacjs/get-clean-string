@@ -12,7 +12,6 @@ test('Cleans the punctuation sign', () => {
     expect(clean(testString)).toBe(expected)
 })
 
-
 test('Cleans the accents', () => {
     const testString = 'Spanish: acción - French: Château'
     const expected = 'spanish accion french chateau'
@@ -35,4 +34,13 @@ test('Testing custom separator -', () => {
     const testString = 'text should contain dashes'
     const expected = 'text-should-contain-dashes'
     expect(clean(testString, '-')).toBe(expected)
+})
+
+test('Test custom map replacement', () => {
+    const custom = {}
+    custom['\''] = ' '
+    custom['"'] = ' '
+    const testString = 'Dad\'s house and Mom"s car'
+    const expected = 'dad s house and mom s car'
+    expect(clean(testString, ' ', custom)).toBe(expected)
 })

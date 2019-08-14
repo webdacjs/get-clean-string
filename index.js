@@ -2,8 +2,16 @@ const charactersMapFile = require('./charactersMap.json')
 const charactersMap = new Map(charactersMapFile)
 const aRange = [31, 123]
 
-module.exports = function (str, separator) {
-  const sep = separator ? separator : ' '
+function assignToMap (custom) {
+  Object.keys(custom).filter(x => x.length === 1).forEach(k => {
+    charactersMap.set(k, custom[k])
+  })
+}
+
+module.exports = function (str, sep = ' ', custom) {
+  if (custom && typeof (custom) === 'object') {
+    assignToMap(custom)
+  }
   return str
     .toLowerCase()
     .split('')
