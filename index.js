@@ -1,10 +1,12 @@
-const charactersMapFile = require('./charactersMap.json')
-const charactersMap = new Map(charactersMapFile)
+const charFile = require('./charactersMap.json')
+const charMap = new Map(charFile)
 const aRange = [31, 123]
+
+const between = (v, min, max) => v > min && v < max
 
 function assignToMap (custom) {
   Object.keys(custom).filter(x => x.length === 1).forEach(k => {
-    charactersMap.set(k, custom[k])
+    charMap.set(k, custom[k])
   })
 }
 
@@ -15,7 +17,7 @@ module.exports = function (str, sep = ' ', custom) {
   return str
     .toLowerCase()
     .split('')
-    .map(s => charactersMap.has(s) ? charactersMap.get(s) : s)
-    .map(s => s.charCodeAt() > aRange[0] && s.charCodeAt() < aRange[1] ? s : '')
-    .join('').trim().replace(/\s{1,}/g , sep)
+    .map(s => charMap.has(s) ? charMap.get(s) : s)
+    .map(s => between(s.charCodeAt(), aRange[0], aRange[1]) ? s : '')
+    .join('').trim().replace(/\s{1,}/g, sep)
 }
