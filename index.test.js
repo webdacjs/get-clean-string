@@ -1,5 +1,10 @@
 const clean = require('./index')
 
+test('Test nothing is changed', () => {
+    const testString = 'it should be the same'
+    expect(clean(testString)).toBe(testString)
+})
+
 test('Cleans the trailing spaces', () => {
     const testString = '   trailing spaces    '
     const expected = 'trailing spaces'
@@ -43,4 +48,11 @@ test('Test custom map replacement', () => {
     const testString = 'Dad\'s house and Mom"s car'
     const expected = 'dad s house and mom s car'
     expect(clean(testString, ' ', custom)).toBe(expected)
+})
+
+test('Test custom keeping special character', () => {
+    const custom = {}
+    custom['\''] = '\''
+    const testString = 'dad\'s house'
+    expect(clean(testString, ' ', custom)).toBe(testString)
 })
