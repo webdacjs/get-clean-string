@@ -11,7 +11,7 @@ You can install with [npm]:
 ```sh
 $ npm install --save get-clean-string
 ```
-## Usage
+## Import
 
 The module needs to be initialized when importing:
 
@@ -21,7 +21,16 @@ const clean = require('get-clean-string')()
 
 ```
 
-Then it requires only the string to be cleaned as an argument:
+NOTE: Don't forget to call it '()' when importing. Otherwise the clean function will always return:
+
+```js
+[Function]
+```
+
+## Usage
+
+
+The module requires only the string to be cleaned as a parameter:
 
 ```js
 
