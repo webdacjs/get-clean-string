@@ -1,4 +1,4 @@
-const clean = require('./index')
+const clean = require('./index')(' ', {8: 'eight'})
 
 test('Test nothing is changed', () => {
     const testString = 'it should be the same'
@@ -65,4 +65,8 @@ test('Test custom keeping special character', () => {
     custom['\''] = '\''
     const testString = 'dad\'s house'
     expect(clean(testString, ' ', custom)).toBe(testString)
+})
+
+test('Test global change', () => {
+    expect(clean(1998)).toBe('199eight')
 })
