@@ -13,13 +13,18 @@ $ npm install --save get-clean-string
 ```
 ## Usage
 
-The module requires just one argument: The string to be cleaned.
+The module needs to be initialized when importing:
 
 ```js
 
-// Example1: Sorting the countries by the name
+const clean = require('get-clean-string')()
 
-const clean = require('get-clean-string');
+```
+
+Then it requires only the string to be cleaned as an argument:
+
+```js
+
 clean(' remove these: !@#$%^&^*&() ')
 
 // Returns
@@ -27,11 +32,10 @@ clean(' remove these: !@#$%^&^*&() ')
 
 ```
 
-Nevertheless it's possible to define a custom separator
+It's possible to define a custom separator
 
 ```js
 
-const clean = require('get-clean-string');
 clean(' remove these: !@#$%^&^*&() ', '-')
 
 //Returns
@@ -43,13 +47,24 @@ A third parameter (an object defining the custom replacements needed) can be use
 
 ```js
 
-const clean = require('get-clean-string');
 clean(' remove these: !@#$%^&^*&() ', '-', {o: '0'})
 
 //Returns
-'rem0ve these'
+'rem0ve-these'
 ```
 
+The second and third parameter can be applied globally when importing the module, so they apply everytime a clean operation is performed:
+
+```js
+
+const clean = require('get-clean-string')('-', {o: '0'})
+clean(' remove these: !@#$%^&^*&() ')
+clean(' remove those: !@#$%^&^*&() ')
+
+//Returns
+'rem0ve-these'
+'rem0ve-th0se'
+```
 
 ### Running tests
 
