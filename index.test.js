@@ -33,6 +33,12 @@ test('Cleans the accents', () => {
     expect(clean(testString)).toBe(expected)
 })
 
+test('Cleans the + sign', () => {
+    const testString = 'text with the + sign'
+    const expected = 'text with the sign'
+    expect(clean(testString)).toBe(expected)
+})
+
 test('Remove chinese characters', () => {
     const testString = 'test With Chinese characters 北京市'
     const expected = 'test with chinese characters'
