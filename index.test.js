@@ -1,4 +1,5 @@
 const clean = require('./index')(' ', {8: 'eight'})
+const otherclean = require('./index')()
 
 test('Test nothing is changed', () => {
     const testString = 'it should be the same'
@@ -75,4 +76,14 @@ test('Test custom keeping special character', () => {
 
 test('Test global change', () => {
     expect(clean(1998)).toBe('199eight')
+})
+
+test('Test local change', () => {
+    expect(clean(1998)).toBe('199eight')
+    expect(clean(1998, ' ', {'8': '8'})).toBe('1998')
+    expect(clean(1998)).toBe('199eight')
+})
+
+test('Testing second instatiation with default map', () => {
+    expect(otherclean(1998)).toBe('1998')
 })
