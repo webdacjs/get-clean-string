@@ -1,6 +1,6 @@
 {
   "name": "get-clean-string",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Module to clean a string removing special characters and replacing accents for asccii equivalents.",
   "scripts": {
     "build": "tsup src/index.ts",
