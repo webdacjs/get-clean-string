@@ -1,10 +1,38 @@
 {
   "name": "get-clean-string",
-  "version": "2.2.0",
+  "version": "3.0.3",
   "description": "Module to clean a string removing special characters and replacing accents for asccii equivalents.",
-  "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "build": "tsup src/index.ts",
+    "dev": "tsup --watch",
+    "test": "vitest"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "tsup": {
+    "dts": true,
+    "bundle": false,
+    "treeshake": true,
+    "target": "node18",
+    "format": [
+      "esm",
+      "cjs"
+    ],
+    "entry": [
+      "src/**/*.ts"
+    ]
   },
   "keywords": [
     "string",
@@ -13,5 +41,11 @@
     "remove accents"
   ],
   "author": "Juan Convers",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "tsup": "^8.1.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
 }

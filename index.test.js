@@ -1,5 +1,8 @@
-const clean = require('./index')(' ', {8: 'eight'})
-const otherclean = require('./index')()
+import { test, expect } from 'vitest'
+import getCleanString from './dist/index.js' // Adjust the path as needed
+
+const clean = getCleanString(' ', {8: 'eight'})
+const otherclean = getCleanString()
 
 test('Test nothing is changed', () => {
     const testString = 'it should be the same'
