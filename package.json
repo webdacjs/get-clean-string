@@ -1,17 +1,28 @@
 {
   "name": "get-clean-string",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.js"
-  },
   "version": "3.0.0",
   "description": "Module to clean a string removing special characters and replacing accents for asccii equivalents.",
   "scripts": {
-    "test": "vitest",
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean"
+    "build": "tsup src/index.ts",
+    "dev": "tsup --watch",
+    "test": "vitest"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "tsup": {
+    "dts": true,
+    "bundle": false,
+    "treeshake": true,
+    "target": "node18",
+    "format": ["esm", "cjs"],
+    "entry": ["src/**/*.ts"]
   },
   "keywords": [
     "string",

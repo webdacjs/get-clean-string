@@ -2,7 +2,7 @@
 
 Simple and fast NPM module to clean up character strings by removing the special characters it might contain and by replacing any accents for its ascii equivalents. The module also accepts custom separators and custom replacements (see documentation below)
 
-It doesn't have any external dependencies.
+It doesn't have any external dependencies for the core library. Only dependencies on typescript for ts support and tsup for efficient bundling.
 
 ## Install
 
