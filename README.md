@@ -1,89 +1,272 @@
 # get-clean-string
 
-Simple and fast NPM module to clean up character strings by removing the special characters it might contain and by replacing any accents for its ascii equivalents. The module also accepts custom separators and custom replacements (see documentation below)
+> Zero-dependency string sanitiser — strips special characters, normalises accents to ASCII, and collapses whitespace into a configurable separator.
 
-It doesn't have any external dependencies for the core library. Only dependencies on typescript for ts support and tsup for efficient bundling.
+[![npm version](https://img.shields.io/npm/v/get-clean-string)](https://www.npmjs.com/package/get-clean-string)
+[![license](https://img.shields.io/npm/l/get-clean-string)](LICENSE)
+
+---
+
+## Features
+
+- **Unicode-complete accent stripping** — uses `String.prototype.normalize('NFD')` and Unicode property escapes instead of a hand-written character table, so every precomposed Latin character is handled automatically.
+- **Ligature expansion** — `æ → ae`, `œ → oe`, `þ → th`, `ĳ → ij`, and more.
+- **Special character removal** — punctuation and symbols are replaced with a space or removed entirely.
+- **Configurable separator** — collapse whitespace runs into any character (e.g. `-` for slugs).
+- **Per-call and global overrides** — customise the replacement map at the factory level or on individual calls.
+- **Unknown input coercion** — any value is safely coerced via `String()` before processing.
+- **TypeScript-first** — ships `.d.ts` declarations; fully typed API with zero `any`.
+- **Dual ESM / CJS build** — works in modern ESM projects and legacy CommonJS.
+- **Zero runtime dependencies**.
+
+---
+
+## Requirements
+
+Node.js `>=18.0.0`
+
+---
 
 ## Install
 
-You can install with [npm]:
-
 ```sh
-$ npm install --save get-clean-string
+npm install get-clean-string
 ```
+
+---
+
 ## Import
 
-The module needs to be initialized when importing:
+### ESM (recommended)
 
 ```js
-
-const clean = require('get-clean-string')()
-
+import createCleaner from 'get-clean-string'
 ```
 
-NOTE: Don't forget to call it '()' when importing. Otherwise the clean function will always return:
+Or using the named export:
 
 ```js
-[Function]
+import { createCleaner } from 'get-clean-string'
 ```
 
-## Usage
-
-
-The module requires only the string to be cleaned as a parameter:
+### CommonJS
 
 ```js
-
-clean(' remove these: !@#$%^&^*&() ')
-
-// Returns
-'remove these'
-
+const { createCleaner } = require('get-clean-string')
+// default export is also available:
+// const createCleaner = require('get-clean-string').default
 ```
 
-It's possible to define a custom separator
+### TypeScript
+
+```ts
+import createCleaner, { type CharacterOverrides } from 'get-clean-string'
+```
+
+---
+
+## Quick start
 
 ```js
+import createCleaner from 'get-clean-string'
 
-clean(' remove these: !@#$%^&^*&() ', '-')
+const clean = createCleaner()
 
-//Returns
-'remove-these'
-
+clean('Héllo, Wörld!')   // → 'hello world'
+clean('acción')          // → 'accion'
+clean('naïve café')      // → 'naive cafe'
+clean('  too   many   spaces  ')  // → 'too many spaces'
+clean('北京市')           // → ''   (non-ASCII with no mapping is dropped)
 ```
 
-A third parameter (an object defining the custom replacements needed) can be used as well.
+---
+
+## API
+
+### `createCleaner(defaultSeparator?, globalOverrides?)`
+
+Factory function. Returns a reusable `cleanString` function.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `defaultSeparator` | `string` | `' '` | Separator used to join tokens on every call. |
+| `globalOverrides` | `CharacterOverrides` | — | Character replacements applied on every call made by the returned function. |
 
 ```js
-
-clean(' remove these: !@#$%^&^*&() ', '-', {o: '0'})
-
-//Returns
-'rem0ve-these'
+const clean = createCleaner()           // default space separator, no overrides
+const slug  = createCleaner('-')        // dash separator — useful for URL slugs
+const custom = createCleaner(' ', { '&': 'and' })  // global override
 ```
 
-The second and third parameter can be applied globally when importing the module, so they apply everytime a clean operation is performed:
+---
+
+### `cleanString(input?, separator?, localOverrides?)`
+
+The function returned by `createCleaner`. Processes `input` and returns a clean ASCII string.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `input` | `unknown` | `''` | Value to clean. Non-strings are coerced via `String()`. |
+| `separator` | `string` | factory's `defaultSeparator` | Overrides the separator for this call only. |
+| `localOverrides` | `CharacterOverrides` | — | Extra character replacements for this call only. Does not affect future calls. |
 
 ```js
+const clean = createCleaner('-')
 
-const clean = require('get-clean-string')('-', {o: '0'})
-clean(' remove these: !@#$%^&^*&() ')
-clean(' remove those: !@#$%^&^*&() ')
-
-//Returns
-'rem0ve-these'
-'rem0ve-th0se'
+clean('hello world')                   // → 'hello-world'
+clean('hello world', '_')             // → 'hello_world'  (per-call separator)
+clean('cats & dogs', '-', { '&': 'and' })  // → 'cats-and-dogs'
 ```
 
-### Running tests
+---
 
-Run the tests and check the functionality of this module using:
+### `CharacterOverrides`
+
+```ts
+type CharacterOverrides = Record<string, string>
+```
+
+An object mapping **single characters** to their replacement strings. Keys with more than one character are silently ignored.
+
+```ts
+const overrides: CharacterOverrides = {
+  '&': 'and',   // & → 'and'
+  "'": "'",      // keep apostrophes instead of removing them
+  '8': 'eight', // replace the digit 8 with the word
+}
+```
+
+---
+## Usage examples
+
+### Accent and diacritic stripping
+
+Handled automatically via Unicode NFD — every precomposed Latin character works, not just those in a hardcoded list.
+
+```js
+const clean = createCleaner()
+
+clean('résumé')     // → 'resume'
+clean('Ångström')   // → 'angstrom'
+clean('façade')     // → 'facade'
+clean('München')    // → 'munchen'
+clean('Ñoño')       // → 'nono'
+```
+
+### Ligature expansion
+
+```js
+clean('æon')        // → 'aeon'
+clean('œuvre')      // → 'oeuvre'
+clean('þorn')       // → 'thorn'
+clean('łódź')       // → 'lodz'
+```
+
+### Special character removal
+
+Punctuation and symbols are replaced with a space. Quotes and apostrophes are removed entirely.
+
+```js
+clean('hello! world?')         // → 'hello world'
+clean('price: $9.99')          // → 'price 9.99'
+clean("dad's car")             // → 'dads car'
+clean('foo@bar.com')           // → 'foo bar.com'
+```
+
+### URL slugs
+
+```js
+const slug = createCleaner('-')
+
+slug('Hello, World!')          // → 'hello-world'
+slug('Ação & Reação')          // → 'acao-reacao'  (Portuguese)
+slug('  multiple   spaces  ')  // → 'multiple-spaces'
+```
+
+### Global overrides (applied to every call)
+
+```js
+const clean = createCleaner(' ', { '&': 'and', '@': 'at' })
+
+clean('cats & dogs')           // → 'cats and dogs'
+clean('user@example.com')      // → 'user at example.com'
+```
+
+### Per-call overrides (scoped to a single call)
+
+Local overrides are merged on top of the global map for that call only. They do not affect subsequent calls.
+
+```js
+const clean = createCleaner()
+
+// Keep apostrophes for this call
+clean("dad's car", ' ', { "'": "'" })  // → "dad's car"
+
+// Next call is unaffected — apostrophes are removed again
+clean("dad's car")                      // → 'dads car'
+```
+
+### Non-string input
+
+Any value is safely coerced via `String()` before processing.
+
+```js
+const clean = createCleaner()
+
+clean(2024)          // → '2024'
+clean(null)          // → 'null'
+clean(true)          // → 'true'
+clean(undefined)     // → ''      (default parameter)
+```
+
+### TypeScript
+
+```ts
+import createCleaner, { type CharacterOverrides } from 'get-clean-string'
+
+const overrides: CharacterOverrides = { '&': 'and' }
+const clean = createCleaner(' ', overrides)
+
+const result: string = clean('cats & dogs')
+// → 'cats and dogs'
+```
+
+---
+
+## Testing
 
 ```sh
-$ npm run test
+# Unit tests (source)
+npm test
+
+# Integration tests (compiled dist — ESM + CJS)
+npm run test:integration
+
+# Both suites
+npm run test:all
+
+# Unit tests with coverage
+npm run coverage
 ```
 
-### License
+---
 
-Copyright © 2019, [Juan Convers](https://juanconvers.com).
+## Migrating from v3
+
+| | v3 | v4 |
+|---|---|---|
+| Import (CJS) | `const clean = require('get-clean-string')()` | `const { createCleaner } = require('get-clean-string')` |
+| Import (ESM) | `import f from 'get-clean-string'; const clean = f()` | `import createCleaner from 'get-clean-string'` |
+| Factory name | anonymous default export | `createCleaner` (named + default) |
+| Input type | `string` | `unknown` (coerced via `String()`) |
+| Accent handling | ~350-entry hand-written map | Unicode NFD — complete coverage |
+| Node.js | — | `>=18.0.0` |
+
+The default export is preserved, so existing call sites that do `import f from 'get-clean-string'; const clean = f()` continue to work without changes.
+
+---
+
+## License
+
+Copyright © 2026, [Juan Convers](https://juanconvers.com).  
 Released under the [MIT License](LICENSE).
